@@ -1,0 +1,33 @@
+#/bin/sh
+
+if [ -z "$1" ]; then
+    echo "Missing local base path"
+    exit 0
+fi
+
+# Config
+WORKDIR=/work
+LOCALWORK_BASE=$1
+LOCALWORK=$LOCALWORK_BASE/work
+SYNCTIMEOUT=5
+
+function auto_sync() {
+    #while inotifywait -r -t $SYNCTIMEOUT -e modify,create,delete,move $1 || true; do
+    while sleep $SYNCTIMEOUT; do
+        # Mark start time
+        date > $1/.last_sync
+
+        # Copy out changes, comparing checksums
+	    rsync -crt --delete $1/ $2
+
+        # Mark end time
+        date >> $1/.last_sync
+        date >> $2/.last_sync
+    done
+}
+
+# Copy volume mount to local filesystem
+rsync -rt $WORKDIR $LOCALWORK_BASE
+
+# Start sync back to volume mount
+(&>/dev/null auto_sync $LOCALWORK $WORKDIR &)

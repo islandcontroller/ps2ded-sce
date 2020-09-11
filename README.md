@@ -62,6 +62,17 @@ Load the *RDB-UIF* executable on your PlayStation and start the DSNET server by 
 
 The script will automatically start up an IOP module server, and dump the register contents of both processors to check the connection.
 
+### Volume mounts from a Windows host
+
+Due to incompatibilities between the 32-bit libraries used by SCE tools and the volume driver for Windows mounts, `ee-gcc` and the like will fail trying to access files in the `/work` directory.
+
+A workaround is provided with the `sync_work` script. This script will copy the `/work` folder to the container-local filesystem, and synchronize outgoing changes back to the Windows host using `rsync`. Synchronization is repeated every 5 seconds, and checks file contents for changes using a CRC.
+
+**Note:** This will keep overriding any changes made on the Windows host.
+
+    sync_work ~
+    cd ~/work
+
 ## Configuration
 
 Use Docker environment variable arguments when launching a new container to configure the IP address of the target device:

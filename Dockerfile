@@ -40,12 +40,14 @@ FROM ubuntu:16.04
 RUN dpkg --add-architecture i386 && \
     apt-get update && export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y install --no-install-recommends \
+        inotify-tools \
         lib32z1 \
         lib32ncurses5 \
         libx11-6:i386 \
         make \
         netbase \
         patch \
+        rsync \
         tmux
 
 # Set up environment variables
@@ -66,6 +68,10 @@ COPY --from=builder /tmp/dsnet/dsnetm ${DSNET}/
 # Copy ps2ded scripts
 RUN mkdir -p ${PS2DEDPATH}
 COPY script ${PS2DEDPATH}
+RUN chmod +x ${PS2DEDPATH}/*
 
 # Expose DSNET server port
 EXPOSE 8510
+
+# Set working directory
+WORKDIR /work
