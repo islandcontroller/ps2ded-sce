@@ -9,6 +9,7 @@ fi
 WORKDIR=/work
 LOCALWORK_BASE=$1
 LOCALWORK=$LOCALWORK_BASE/work
+TRANSFERNAME=_transfer
 SYNCTIMEOUT=5
 
 function auto_sync() {
@@ -18,7 +19,10 @@ function auto_sync() {
         date > $1/.last_sync
 
         # Copy out changes, comparing checksums
-	    rsync -crt --delete $1/ $2
+        rsync -crt --exclude "$TRANSFERNAME" --delete $1/ $2
+
+        # Copy in data from the _transfer folder
+        rsync -crt --delete $2/$TRANSFERNAME/ $1/$TRANSFERNAME
 
         # Mark end time
         date >> $1/.last_sync

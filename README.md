@@ -70,10 +70,12 @@ Due to incompatibilities between the 32-bit libraries used by SCE tools and the 
 
 A workaround is provided with the `sync_work` script. This script will copy the `/work` folder to the container-local filesystem, and synchronize outgoing changes back to the Windows host using `rsync`. Synchronization is repeated every 5 seconds, and checks file contents for changes using a CRC.
 
-**Note:** This will keep overriding any changes made on the Windows host.
+**Note:** This will keep overriding any changes made on the Windows host, except for the `_transfer` folder.
 
     sync_work ~
     cd ~/work
+
+In order to transfer files from the Windows host to the container, create a `_transfer` folder in the work directory. Any changes made to the files contained in this folder from within the container will, again be overwritten.
 
 ## Configuration
 
